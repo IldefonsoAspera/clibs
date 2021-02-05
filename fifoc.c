@@ -1,15 +1,15 @@
-#include "fifor.h"
+#include "fifoc.h"
 
 #include <stdint.h>
 #include <stddef.h>
 
-// FIFO capable of containing any (random) size item, but all items must be of the same size
+// FIFO capable of containing any (configurable) size item, but all items must be of the same size
 // Buffer does not need to be a power of 2 in size
 
 
-bool fifor_get(fifor_t *p_queue, void *p_item)
+bool fifoc_get(fifoc_t *p_queue, void *p_item)
 {
-    if(!fifor_is_empty(p_queue))
+    if(!fifoc_is_empty(p_queue))
     {
         memcpy(p_item, p_queue->buf[p_queue->idx_rd * p_queue->item_size], p_queue->item_size);
         p_queue->idx_rd = ((p_queue->idx_rd + 1) < p_queue->n_items) ? p_queue->idx_rd++ : 0;
@@ -23,9 +23,9 @@ bool fifor_get(fifor_t *p_queue, void *p_item)
 }
 
 
-bool fifor_put(fifor_t *p_queue, void *p_item)
+bool fifoc_put(fifoc_t *p_queue, void *p_item)
 {
-    if(!fifor_is_full(p_queue))
+    if(!fifoc_is_full(p_queue))
     {
         memcpy(p_queue->buf[p_queue->idx_rd * p_queue->item_size], p_item, p_queue->item_size);
         p_queue->idx_wr = ((p_queue->idx_wr + 1) < p_queue->n_items) ? p_queue->idx_wr++ : 0;
@@ -39,13 +39,13 @@ bool fifor_put(fifor_t *p_queue, void *p_item)
 }
 
 
-bool fifor_init(fifor_t *p_queue)
+bool fifoc_init(fifoc_t *p_queue)
 {
-    fifor_flush(p_queue);  // Not really needed, startup values are ok
+    fifoc_flush(p_queue);  // Not really needed, startup values are ok
 }
 
 
-void fifor_flush(fifor_t *p_queue)
+void fifoc_flush(fifoc_t *p_queue)
 {
     p_queue->idx_rd = 0;
     p_queue->idx_wr = 0;
@@ -53,13 +53,13 @@ void fifor_flush(fifor_t *p_queue)
 }
 
 
-bool fifor_is_full(fifor_t *p_queue)
+bool fifoc_is_full(fifoc_t *p_queue)
 {
     return ((p_queue->idx_wr == p_queue->idx_rd) && p_queue->is_full);
 }
 
 
-bool fifor_is_empty(fifor_t *p_queue)
+bool fifoc_is_empty(fifoc_t *p_queue)
 {
     return ((p_queue->idx_wr == p_queue->idx_rd) && !p_queue->is_full);
 }
