@@ -23,7 +23,7 @@ typedef struct fifoc_s
 } fifoc_t;
 
 
-#define QUEUE_DEF(_name, _item_type, _n_items)                           \
+#define FIFOC_DEF(_name, _item_type, _n_items)                           \
     static uint8_t CONCAT_2(_name, _array)[sizeof(_item_type)*_n_items]; \
     static fifoc_t _name = {                                             \
         .buf = CONCAT_2(_name, _array),                                  \
@@ -31,7 +31,7 @@ typedef struct fifoc_s
         .idx_wr = 0,                                                     \
         .n_items = _n_items,                                             \
         .item_size = sizeof(_item_type),                                 \
-        .is_full = true,                                                 \
+        .is_full = false,                                                 \
     }
 
 
