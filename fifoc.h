@@ -17,21 +17,21 @@ typedef struct fifoc_s
     uint8_t * const buf;
     volatile uint32_t idx_rd;
     volatile uint32_t idx_wr;
-    uint32_t n_items;
+    volatile uint32_t n_items;
+    uint32_t max_items;
     size_t   item_size;
-    bool     is_full;
 } fifoc_t;
 
 
-#define FIFOC_DEF(_name, _item_type, _n_items)                           \
-    static uint8_t CONCAT_2(_name, _array)[sizeof(_item_type)*_n_items]; \
-    static fifoc_t _name = {                                             \
-        .buf = CONCAT_2(_name, _array),                                  \
-        .idx_rd = 0,                                                     \
-        .idx_wr = 0,                                                     \
-        .n_items = _n_items,                                             \
-        .item_size = sizeof(_item_type),                                 \
-        .is_full = false,                                                 \
+#define FIFOC_DEF(_name, _item_type, _max_items)                           \
+    static uint8_t CONCAT_2(_name, _array)[sizeof(_item_type)*_max_items]; \
+    static fifoc_t _name = {                                               \
+        .buf = CONCAT_2(_name, _array),                                    \
+        .idx_rd = 0,                                                       \
+        .idx_wr = 0,                                                       \
+        .max_items = _max_items,                                           \
+        .item_size = sizeof(_item_type),                                   \
+        .n_items = 0                                                       \
     }
 
 

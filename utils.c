@@ -1,7 +1,7 @@
 #include "utils.h"
 
 
-inline void util_assert(int e)
+void util_assert(int e)
 {
     if(e)
     {
@@ -16,12 +16,12 @@ inline void util_assert(int e)
     }
 }
 
-inline int min(int a, int b)
+int min(int a, int b)
 {
     return (a > b ? b : a);
 }
 
-inline int max(int a, int b)
+int max(int a, int b)
 {
     return (a > b ? a : b);
 }

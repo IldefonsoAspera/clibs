@@ -8,14 +8,14 @@ extern "C" {
 #ifdef NDEBUG
 util_assert(e) ((void)0)
 #else
-inline void util_assert(int e);
+void util_assert(int e);
 #endif
 
 #define _CONCAT_2(a, b) a##b
 #define CONCAT_2(a, b) _CONCAT_2(a, b)
 
-inline int min(int a, int b);
-inline int max(int a, int b);
+int min(int a, int b);
+int max(int a, int b);
 
 
 
