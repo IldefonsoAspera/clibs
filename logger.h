@@ -17,8 +17,14 @@ typedef void (*logger_writer)(char* str, uint16_t length);
 
 
 #define LOG_D   "D "
+#define LOG_N   "N "
+#define LOG_W   "W "
+#define LOG_E   "E "
 #define LOG_END "\n"
 #define log_debug(_str)   log_insert(LOG_D _str LOG_END, (uint16_t)(strlen(LOG_D _str LOG_END)+1))
+#define log_notif(_str)   log_insert(LOG_N _str LOG_END, (uint16_t)(strlen(LOG_N _str LOG_END)+1))
+#define log_warn(_str)    log_insert(LOG_W _str LOG_END, (uint16_t)(strlen(LOG_W _str LOG_END)+1))
+#define log_error(_str)   log_insert(LOG_E _str LOG_END, (uint16_t)(strlen(LOG_E _str LOG_END)+1))
 
 void log_insert(const char *str, uint16_t length);
 bool log_process();

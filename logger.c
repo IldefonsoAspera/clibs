@@ -1,7 +1,7 @@
 #include "logger.h"
 
 #include "fifoc.h"
-
+#include <stdio.h>
 /*
 
     funcion que recibe puntero a string
@@ -12,15 +12,17 @@
 */
 
 FIFOC_DEF(q_str, const char*, LOGGER_N_ENTRIES);
-FIFOC_DEF(q_length, const char*, LOGGER_N_ENTRIES);
+FIFOC_DEF(q_length, uint16_t, LOGGER_N_ENTRIES);
 
 static logger_writer callback = NULL;
+
 
 void log_insert(const char *str, uint16_t length)
 {
     fifoc_put(&q_str, &str);   // Store pointer to string
-    fifoc_put(&q_length, &str);   // Store string length
+    fifoc_put(&q_length, &length);   // Store string length
 }
+
 
 // True if a new str has been processed. False if log queue was empty
 bool log_process()
@@ -38,6 +40,7 @@ bool log_process()
     }
     return ret_val;
 }
+
 
 void log_init(logger_writer handler)
 {

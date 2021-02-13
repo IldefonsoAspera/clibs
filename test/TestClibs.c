@@ -139,14 +139,21 @@ void test_fifoc(void)
 
 void print_log(char* str, uint16_t length)
 {
-    printf("%s", str);
+    printf("%.*s", length, str);
 }
 
 void test_logger()
 {
     log_init(print_log);
-    log_debug("Test_string");
-    log_debug("Test_string2");   
+    TEST_ASSERT_FALSE(log_process());
+    log_debug("Test_string_debug");
+    log_debug("Test_string2_debug");
+    log_notif("Test_string_notif");
+    log_warn("Test_string2_warn");
+    log_error("Test_string2_error");   
+    TEST_ASSERT_TRUE(log_process());
+    TEST_ASSERT_TRUE(log_process());
+    TEST_ASSERT_TRUE(log_process());
     TEST_ASSERT_TRUE(log_process());
     TEST_ASSERT_TRUE(log_process());
     TEST_ASSERT_FALSE(log_process());
