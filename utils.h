@@ -14,6 +14,10 @@ void util_assert(int e);
 #define _CONCAT_2(a, b) a##b
 #define CONCAT_2(a, b) _CONCAT_2(a, b)
 
+#define _CONCAT_3(a, b, c) a##b##c
+#define CONCAT_3(a, b, c) _CONCAT_3(a, b, c)
+
+
 int min(int a, int b);
 int max(int a, int b);
 
