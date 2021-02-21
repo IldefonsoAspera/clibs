@@ -9,25 +9,25 @@
 // WARNING this fifo is only safe as long as there is 1 reader and 1 writer only
 
 
-bool fifoc_is_full(fifoc_t *p_queue)
+bool fifoc_is_full(fifoc_t *p_fifo)
 {
-    return p_queue->n_items == p_queue->max_items;
+    return p_fifo->n_items == p_fifo->max_items;
 }
 
 
-bool fifoc_is_empty(fifoc_t *p_queue)
+bool fifoc_is_empty(fifoc_t *p_fifo)
 {
-    return p_queue->n_items == 0;
+    return p_fifo->n_items == 0;
 }
 
 
-bool fifoc_get(fifoc_t *p_queue, void *p_item)
+bool fifoc_get(fifoc_t *p_fifo, void *p_item)
 {
-    if(!fifoc_is_empty(p_queue))
+    if(!fifoc_is_empty(p_fifo))
     {
-        memcpy(p_item, &p_queue->buf[p_queue->idx_rd * p_queue->item_size], p_queue->item_size);
-        p_queue->idx_rd = (p_queue->idx_rd + 1) % p_queue->max_items;
-        p_queue->n_items--;
+        memcpy(p_item, &p_fifo->buf[p_fifo->idx_rd * p_fifo->item_size], p_fifo->item_size);
+        p_fifo->idx_rd = (p_fifo->idx_rd + 1) % p_fifo->max_items;
+        p_fifo->n_items--;
         return true;
     }
     else
@@ -37,13 +37,13 @@ bool fifoc_get(fifoc_t *p_queue, void *p_item)
 }
 
 
-bool fifoc_put(fifoc_t *p_queue, void *p_item)
+bool fifoc_put(fifoc_t *p_fifo, void *p_item)
 {
-    if(!fifoc_is_full(p_queue))
+    if(!fifoc_is_full(p_fifo))
     {
-        memcpy(&p_queue->buf[p_queue->idx_wr * p_queue->item_size], p_item, p_queue->item_size);
-        p_queue->idx_wr = (p_queue->idx_wr + 1) % p_queue->max_items;
-        p_queue->n_items++;
+        memcpy(&p_fifo->buf[p_fifo->idx_wr * p_fifo->item_size], p_item, p_fifo->item_size);
+        p_fifo->idx_wr = (p_fifo->idx_wr + 1) % p_fifo->max_items;
+        p_fifo->n_items++;
         return true;
     }
     else
@@ -53,15 +53,15 @@ bool fifoc_put(fifoc_t *p_queue, void *p_item)
 }
 
 
-bool fifoc_init(fifoc_t *p_queue)
+bool fifoc_init(fifoc_t *p_fifo)
 {
-    fifoc_flush(p_queue);  // Not really needed, startup values are ok
+    fifoc_flush(p_fifo);  // Not really needed, startup values are ok
 }
 
 
-void fifoc_flush(fifoc_t *p_queue)
+void fifoc_flush(fifoc_t *p_fifo)
 {
-    p_queue->idx_rd = 0;
-    p_queue->idx_wr = 0;
-    p_queue->n_items = 0;
+    p_fifo->idx_rd = 0;
+    p_fifo->idx_wr = 0;
+    p_fifo->n_items = 0;
 }
