@@ -12,7 +12,7 @@ extern "C" {
 #include <stddef.h>
 
 
-typedef struct fifoc_s
+typedef struct fifoc_cb
 {
     uint8_t * const buf;
     volatile uint32_t idx_rd;
@@ -36,7 +36,7 @@ typedef struct fifoc_s
 
 
 /**
- * @brief Retrieves item and deletes it from the fifo
+ * @brief Retrieves head item and deletes it from the fifo
  * 
  * @param p_fifo Fifo from which the item will be retrieved
  * @param p_item Pointer to memory where the item will be copied

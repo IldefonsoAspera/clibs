@@ -10,24 +10,24 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct fifor_s
+typedef struct fifor_cb
 {
     uint8_t  *const   buf;
     volatile uint32_t idx_rd;
     volatile uint32_t idx_wr;
     size_t            buf_size; 
-    size_t            n_in_use;
+    size_t            bytes_used;
 } fifor_t;
 
 
 #define FIFOR_DEF(_name, _size)                      \
-    static uint8_t CONCAT_2(_name, _data)[_size];   \
+    static uint8_t CONCAT_2(_name, _data)[_size];    \
     static fifor_t _name = {                         \
-        .buf = CONCAT_2(_name, _data),              \
+        .buf = CONCAT_2(_name, _data),               \
         .idx_rd = 0,                                 \
         .idx_wr = 0,                                 \
         .buf_size = _size,                           \
-        .n_in_use = 0                                \
+        .bytes_used = 0                              \
     }
 
 
@@ -43,7 +43,7 @@ bool fifor_is_empty(fifor_t *p_fifo);
 /**
  * @brief Deletes all items in fifo
  * 
- * @param p_fifo Fifo to empty
+ * @param p_fifo Fifo to clear
  */
 void fifor_flush(fifor_t *p_fifo);
 
@@ -59,10 +59,10 @@ void fifor_flush(fifor_t *p_fifo);
 bool fifor_write(fifor_t *p_fifo, uint16_t length, void *p_data);
 
 /**
- * @brief Retrieves item without deleting it from the fifo
+ * @brief Retrieves head item without deleting it from the fifo
  * 
  * @param p_fifo Fifo from which the item will be retrieved
- * @param p_read_length Size in bytes of the item
+ * @param p_read_length Size in bytes of the item copied
  * @param p_data Pointer to memory where the item will be copied
  * @return true If item could be retrieved from fifo
  * @return false If queue was empty
@@ -70,10 +70,10 @@ bool fifor_write(fifor_t *p_fifo, uint16_t length, void *p_data);
 bool fifor_peek(fifor_t *p_fifo, uint16_t *p_read_length, void *p_data);
 
 /**
- * @brief Retrieves item and deletes it from the fifo
+ * @brief Retrieves head item and deletes it from the fifo
  * 
  * @param p_fifo Fifo from which the item will be retrieved
- * @param p_read_length Size in bytes of the item
+ * @param p_read_length Size in bytes of the item copied
  * @param p_data Pointer to memory where the item will be copied
  * @return true If item could be retrieved from fifo
  * @return false If queue was empty

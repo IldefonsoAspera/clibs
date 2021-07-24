@@ -30,10 +30,10 @@ void test_fifor(void)
     my_fifor_cmp[0] = 0xA5;
     var = 0xDEAD;
     TEST_ASSERT_TRUE(fifor_write(&my_fifor, 1, &my_fifor_cmp[0]));
-    TEST_ASSERT_EQUAL_UINT32(3, my_fifor.n_in_use);
+    TEST_ASSERT_EQUAL_UINT32(3, my_fifor.bytes_used);
     TEST_ASSERT_TRUE(fifor_write(&my_fifor, 2, &var));
     TEST_ASSERT_FALSE(fifor_write(&my_fifor, 1, &my_fifor_cmp[0]));
-    TEST_ASSERT_EQUAL_UINT32(7, my_fifor.n_in_use);
+    TEST_ASSERT_EQUAL_UINT32(7, my_fifor.bytes_used);
     TEST_ASSERT_TRUE(fifor_peek(&my_fifor, &size, &my_fifor_cmp[4]));
     TEST_ASSERT_EQUAL_UINT8(0xA5, my_fifor_cmp[4]);
     TEST_ASSERT_TRUE(fifor_read(&my_fifor, &size, &my_fifor_cmp[0]));

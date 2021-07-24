@@ -8,6 +8,9 @@
 // Buffer does not need to be a power of 2 in size
 // WARNING this fifo is only safe as long as there is 1 reader and 1 writer only
 
+#define FIFOC_INCR_IDX(_idx)    ((_idx) = ((_idx) + 1) % p_fifo->max_items)
+
+
 
 bool fifoc_is_full(fifoc_t *p_fifo)
 {
@@ -25,8 +28,10 @@ bool fifoc_get(fifoc_t *p_fifo, void *p_item)
 {
     if(!fifoc_is_empty(p_fifo))
     {
-        memcpy(p_item, &p_fifo->buf[p_fifo->idx_rd * p_fifo->item_size], p_fifo->item_size);
-        p_fifo->idx_rd = (p_fifo->idx_rd + 1) % p_fifo->max_items;
+        uint8_t *p_item_fifo = &p_fifo->buf[p_fifo->idx_rd * p_fifo->item_size];
+
+        memcpy(p_item, p_item_fifo, p_fifo->item_size);
+        FIFOC_INCR_IDX(p_fifo->idx_rd);
         p_fifo->n_items--;
         return true;
     }
@@ -41,8 +46,10 @@ bool fifoc_put(fifoc_t *p_fifo, void *p_item)
 {
     if(!fifoc_is_full(p_fifo))
     {
-        memcpy(&p_fifo->buf[p_fifo->idx_wr * p_fifo->item_size], p_item, p_fifo->item_size);
-        p_fifo->idx_wr = (p_fifo->idx_wr + 1) % p_fifo->max_items;
+        uint8_t *p_item_fifo = &p_fifo->buf[p_fifo->idx_wr * p_fifo->item_size];
+
+        memcpy(p_item_fifo, p_item, p_fifo->item_size);
+        FIFOC_INCR_IDX(p_fifo->idx_wr);
         p_fifo->n_items++;
         return true;
     }

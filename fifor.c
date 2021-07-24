@@ -7,7 +7,7 @@
 
 // Only safe as long as there is 1 reader and 1 writer, and no flushes are performed
 // while reading or writing
-// p_fifo->n_in_use variable must be updated atomically (all its bytes on the same instruction)
+// p_fifo->bytes_used variable must be updated atomically (all its bytes on the same instruction)
 
 /*
 data to store in the queue
@@ -24,30 +24,31 @@ data to store in the queue
   |
   | packet is inserted in queue, along with others
   V
- -------------------------------------------------
-| ... | size1 | payload1 | size2 | payload2 | ... |
- -------------------------------------------------
+ ----------------------------------------------------
+| ... || size1 | payload1 || size2 | payload2 || ... |
+ ----------------------------------------------------
 */
 
 
-#define FIFOR_INCR_IDX(_idx)    (_idx) = ((_idx) + 1) % p_fifo->buf_size;
+#define FIFOR_INCR_IDX(_idx)    ((_idx) = ((_idx) + 1) % p_fifo->buf_size)
+
 
 
 static size_t fifor_free_space(fifor_t *p_fifo)
 {
-    return p_fifo->buf_size - p_fifo->n_in_use;
+    return p_fifo->buf_size - p_fifo->bytes_used;
 }
 
 
 static size_t fifor_filled_space(fifor_t *p_fifo)
 {
-    return p_fifo->n_in_use;
+    return p_fifo->bytes_used;
 }
 
 
 bool fifor_is_empty(fifor_t *p_fifo)
 {
-    return p_fifo->n_in_use == 0;
+    return p_fifo->bytes_used == 0;
 }
 
 
@@ -55,7 +56,7 @@ void fifor_flush(fifor_t *p_fifo)
 {
     p_fifo->idx_rd = 0;
     p_fifo->idx_wr = 0;
-    p_fifo->n_in_use = 0;
+    p_fifo->bytes_used = 0;
 }
 
 
@@ -77,7 +78,7 @@ bool fifor_write(fifor_t *p_fifo, uint16_t length, void *p_data)
             FIFOR_INCR_IDX(p_fifo->idx_wr);
         }
 
-        p_fifo->n_in_use += req_length + sizeof(length);    // sizeof(length) is not an errata
+        p_fifo->bytes_used += req_length + sizeof(length);    // sizeof(length) is not an errata
         return true;
     }
     else
@@ -123,7 +124,7 @@ bool fifor_read(fifor_t *p_fifo, uint16_t *p_read_length, void *p_data)
     {
         *p_read_length = length;
         p_fifo->idx_rd = (p_fifo->idx_rd + length + sizeof(length)) % p_fifo->buf_size;
-        p_fifo->n_in_use -= length + sizeof(length);
+        p_fifo->bytes_used -= length + sizeof(length);
         return true;
     }
     else
